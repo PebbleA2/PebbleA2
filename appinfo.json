@@ -2,13 +2,13 @@
   "uuid": "a2992714-6124-46db-9831-79537bef5d5e",
   "shortName": "PebbleA2",
   "longName": "PebbleA2",
-  "companyName": "MakeAwesomeHappen",
-  "versionLabel": "1.0",
+  "companyName": "PebbleA2",
+  "versionLabel": "0.1",
   "sdkVersion": "3",
   "targetPlatforms": ["aplite", "basalt", "chalk"],
   "enableMultiJS": true,
   "watchapp": {
-    "watchface": false
+    "watchface": true
   },
   "appKeys": {
     "dummy": 0
