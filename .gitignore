@@ -1,5 +1,9 @@
 # Ignore build generated files
 build
 
+# Ignore Screenshots
+pebble-screenshot_*
+pebble_screenshot_*
+
 # Ignore waf lock file
 .lock-waf*
