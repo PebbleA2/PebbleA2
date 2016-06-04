@@ -2,6 +2,7 @@
 
 static Window *s_window;
 static TextLayer *s_time_layer;
+static TextLayer *s_message_layer;
 
 static void update_time() {
 
@@ -25,8 +26,8 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  // calculate centered rect based on text/font
-  GPoint left_center = GPoint(0, bounds.size.h / 2);
+  // calculate centered - horizontally/vertically in top half - rect based on text/font
+  GPoint left_center = GPoint(0, bounds.size.h / 4);
   GRect bounding_box = GRect(left_center.x, left_center.y, bounds.size.w, 42 + 16);
 
   GFont time_font = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
@@ -37,6 +38,7 @@ static void window_load(Window *window) {
   GPoint optimal_point = GPoint(left_center.x + ((bounds.size.w - optimal_size.w) / 2), left_center.y - (optimal_size.h / 2));
   optimal_point.y -= 6; // fudge factor due to weird font rendering
 
+  // Create and add time TextLayer
   s_time_layer = text_layer_create(GRect(optimal_point.x, optimal_point.y, optimal_size.w, optimal_size.h));
   //text_layer_set_text(s_time_layer, "00:00");
   text_layer_set_font(s_time_layer, time_font);
@@ -48,6 +50,21 @@ static void window_load(Window *window) {
   text_layer_set_text_color(s_time_layer, GColorBlack);
 
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+
+  // Create and add message TextLayer filling bottom half of screen
+  GFont message_font = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
+  s_message_layer = text_layer_create(GRect(0, bounds.size.h / 2, bounds.size.w, bounds.size.h / 2));
+  text_layer_set_text(s_message_layer, "Loading...");
+  text_layer_set_font(s_message_layer, message_font);
+
+  text_layer_set_overflow_mode(s_message_layer, time_overflow);
+  text_layer_set_text_alignment(s_message_layer, time_alignment);
+
+  text_layer_set_background_color(s_message_layer, GColorBlack);
+  text_layer_set_text_color(s_message_layer, GColorWhite);
+
+  layer_add_child(window_layer, text_layer_get_layer(s_message_layer));
+
 }
 
 static void window_unload(Window *window) {
