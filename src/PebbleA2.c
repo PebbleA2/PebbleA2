@@ -1,8 +1,26 @@
 #include <pebble.h>
 
+#define KEY_MESSAGE 0
+
 static Window *s_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_message_layer;
+
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  // TODO
+}
+
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+}
+
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+}
+
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
 
 static void update_time() {
 
@@ -36,7 +54,7 @@ static void window_load(Window *window) {
 
   GSize optimal_size = graphics_text_layout_get_content_size("00:00", time_font, bounding_box, time_overflow, time_alignment);
   GPoint optimal_point = GPoint(left_center.x + ((bounds.size.w - optimal_size.w) / 2), left_center.y - (optimal_size.h / 2));
-  optimal_point.y -= 6; // fudge factor due to weird font rendering
+  optimal_point.y += PBL_IF_ROUND_ELSE(6, -6); // fudge factor due to weird font rendering; tweak vertical alignment for Round
 
   // Create and add time TextLayer
   s_time_layer = text_layer_create(GRect(optimal_point.x, optimal_point.y, optimal_size.w, optimal_size.h));
@@ -85,6 +103,17 @@ static void init(void) {
 
   // Register with TickTimerService (MINUTE_UNIT in order to save on battery usage)
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+
+  // Open AppMessage
+  const int inbox_size = 128;
+  const int outbox_size = 128;
+  app_message_open(inbox_size, outbox_size);
 }
 
 static void deinit(void) {

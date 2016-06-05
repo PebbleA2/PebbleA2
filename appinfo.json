@@ -11,7 +11,7 @@
     "watchface": true
   },
   "appKeys": {
-    "dummy": 0
+    "message": 0
   },
   "resources": {
     "media": []
