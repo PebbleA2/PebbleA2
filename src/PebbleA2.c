@@ -7,7 +7,16 @@ static TextLayer *s_time_layer;
 static TextLayer *s_message_layer;
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  // TODO
+
+  static char message_buffer[43]; // null-terminated = 42 char actual (fits PT and PTR)
+
+  // Read message tuple
+  Tuple *message_tuple = dict_find(iterator, KEY_MESSAGE);
+
+  if(message_tuple) {
+    snprintf(message_buffer, sizeof(message_buffer), "%s", message_tuple->value->cstring);
+    text_layer_set_text(s_message_layer, message_buffer);
+  }
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
