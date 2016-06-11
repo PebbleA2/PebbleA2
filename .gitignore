@@ -7,3 +7,5 @@ pebble_screenshot_*
 
 # Ignore waf lock file
 .lock-waf*
+
+node_modules/
