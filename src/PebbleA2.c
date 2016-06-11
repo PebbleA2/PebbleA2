@@ -1,10 +1,12 @@
 #include <pebble.h>
+#include <pebble-bluetooth-icon/pebble-bluetooth-icon.h>
 
 #define KEY_MESSAGE 0
 
 static Window *s_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_message_layer;
+static BluetoothLayer *s_bluetooth_layer;
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
 
@@ -105,9 +107,16 @@ static void window_load(Window *window) {
 
   layer_add_child(window_layer, text_layer_get_layer(s_message_layer));
 
+  // calculate center for BT icon
+  GPoint bluetooth_center = GPoint((bounds.size.w / 2) - 5, (bounds.size.h / 2) - 5);
+  s_bluetooth_layer = bluetooth_layer_create();
+  bluetooth_set_position(bluetooth_center);
+  layer_add_child(window_layer, s_bluetooth_layer);
 }
 
 static void window_unload(Window *window) {
+  bluetooth_layer_destroy(s_bluetooth_layer);
+  text_layer_destroy(s_message_layer);
   text_layer_destroy(s_time_layer);
 }
 
